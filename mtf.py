@@ -18,7 +18,7 @@ class IMaGE(object):
 
         self.key = False
         self.count = 0
-        
+
         self.ax.add_patch(self.rect)
         self.ax.figure.canvas.mpl_connect('button_press_event', self.on_press)
         self.ax.figure.canvas.mpl_connect('motion_notify_event', self.on_motion)
@@ -49,11 +49,11 @@ class IMaGE(object):
     def cut(self,image,**args):
         for i in args.keys():
             print "{} : {}".format(i,args[i])
-       
+
         # operator that define a box area
         M = image[int(args["y0"]):int(args["y1"]),int(args["x0"]):int(args["x1"])]
         self.M_out = 0.299*M[:,:,0] + 0.589*M[:,:,1]+0.114*M[:,:,2]
-        
+
         plt.figure()
         plt.title("operator box-area")
         plt.imshow(self.M_out,cmap = "gray")
@@ -84,28 +84,28 @@ class IMaGE(object):
         Line Spread Function calculation
         """
         self.lsf = self.edge_function[:-2] - self.edge_function[2:]
-        
-        x = range(0,self.lsf.shape[0])        
+
+        x = range(0,self.lsf.shape[0])
         plt.figure()
         plt.title("LSF")
         plt.plot(x,self.lsf[:],'-or')
         plt.show()
 
     def MTF(self):
-		"""
-		Modulation Transfer Function calculation
-		"""
-		self.mtf = abs(np.fft.fft(self.lsf))
-		self.mtf = self.mtf[:]/self.mtf[0]
-		x = range(0,self.mtf.shape[0])
-		
-		plt.figure()
-		plt.title("MTF")
-		# plt.axis([0,50,0,2])
-		p, = plt.plot(x,self.mtf[:],'-ok')
-		plt.legend([p],["experimental"])
-		plt.grid()
-		plt.show()
+        """
+        Modulation Transfer Function calculation
+        """
+        self.mtf = abs(np.fft.fft(self.lsf))
+        self.mtf = self.mtf[:]/self.mtf[0]
+        x = range(0,self.mtf.shape[0])
+
+        plt.figure()
+        plt.title("MTF")
+        # plt.axis([0,50,0,2])
+        p, = plt.plot(x,self.mtf[:],'-ok')
+        plt.legend([p],["experimental"])
+        plt.grid()
+        plt.show()
 
 if __name__ == "__main__":
 	plt.figure()
@@ -113,6 +113,6 @@ if __name__ == "__main__":
 	plt.xlabel(r'M') ; plt.ylabel(r'N')
 	im = plt.imread("images/example.png")
 	a = IMaGE()
-	
+
 	plt.imshow(im)
 	plt.show()
