@@ -6,7 +6,7 @@ import numpy as np
 from PIL import *
 
 class IMaGE(object):
-    def __init__(self):
+    def __init__(self,lin = False):
         self.ax = plt.gca()
         self.rect = Rectangle((0,0), 1, 1,antialiased = True,color = 'b',
 							linestyle = 'solid', lw = 1.2)
@@ -15,6 +15,7 @@ class IMaGE(object):
         self.y0 = None
         self.x1 = None
         self.y1 = None
+        self.linealize = lin
 
         self.key = False
         self.count = 0
@@ -50,13 +51,12 @@ class IMaGE(object):
         for i in args.keys():
             print "{} : {}".format(i,args[i])
 
-        # operator that define a box area
         M = image[int(args["y0"]):int(args["y1"]),int(args["x0"]):int(args["x1"])]
         self.M_out = 0.299*M[:,:,0] + 0.589*M[:,:,1]+0.114*M[:,:,2]
 
         plt.figure()
         plt.title("operator box-area")
-        plt.imshow(self.M_out,cmap = "gray")
+        plt.imshow(self.M_out)
         name = "box_selection_{}.png".format(self.count)
         # imag = Image.fromarray(np.asarray(self.M_out),mode = "RGB")
         # imag.save("prueba.png")
@@ -88,6 +88,7 @@ class IMaGE(object):
         x = range(0,self.lsf.shape[0])
         plt.figure()
         plt.title("LSF")
+        plt.xlabel(r'pixel') ; plt.ylabel('intensidad')
         plt.plot(x,self.lsf[:],'-or')
         plt.show()
 
@@ -97,12 +98,13 @@ class IMaGE(object):
         """
         self.mtf = abs(np.fft.fft(self.lsf))
         self.mtf = self.mtf[:]/self.mtf[0]
-        x = range(0,self.mtf.shape[0])
+        self.mtf = self.mtf[:len(self.mtf)//2]
+        ix = np.arange(self.mtf.shape[0]) / (2 * self.mtf.shape[0])
 
         plt.figure()
         plt.title("MTF")
-        # plt.axis([0,50,0,2])
-        p, = plt.plot(x,self.mtf[:],'-ok')
+        plt.xlabel(r'$\nu$ $[pixel^{-1}]$') ; plt.ylabel('mtf')
+        p, = plt.plot(ix,self.mtf[:],'-k')
         plt.legend([p],["experimental"])
         plt.grid()
         plt.show()
